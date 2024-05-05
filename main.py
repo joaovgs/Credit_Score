@@ -5,7 +5,6 @@ import pandas as pd
 
 app = FastAPI()
 
-# Carregar o conjunto de dados
 try:
     dataset = pd.read_csv('Car_Insurance_Claim.csv')
 except FileNotFoundError:
@@ -75,7 +74,6 @@ async def calculate_credit_score(
     vehicle_type: VehicleType = Form(...),
     annual_mileage: float = Form(...),
 ):
-    # Criar um objeto PersonData com os dados fornecidos
     data = PersonData(
         age=age,
         gender=gender,
@@ -87,17 +85,13 @@ async def calculate_credit_score(
         annual_mileage=annual_mileage
     )
 
-    # Filtrar o conjunto de dados com base nos dados fornecidos na solicitação
     filtered_data = dataset
     for field, value in data.dict().items():
         filtered_data = filtered_data[filtered_data[field.upper()] == value]
 
-    # Verificar se há pelo menos um registro correspondente
     if filtered_data.empty:
         raise HTTPException(status_code=404, detail="Nenhum registro correspondente encontrado")
 
-    # Calcular o CREDIT_SCORE com base nos dados filtrados
     credit_score = filtered_data['CREDIT_SCORE'].mean()
 
-    # Retornar o CREDIT_SCORE
     return {"credit_score": credit_score}
